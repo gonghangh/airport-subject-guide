@@ -447,7 +447,7 @@ const SUBJECTS_DATA = [
     ],
     deepConcepts: "가정생활과 인간의 삶을 과학적·체계적 방법론으로 연구하여 개인과 사회의 웰빙(Well-being)을 구현하는 실천 학문입니다.",
     tags: ["식품영양", "패션", "디자인", "소비자", "가족복지", "생활과학"]
-
+  },
   {
     id: "sem2-lang-jp-culture",
     semester: 2,
