@@ -470,7 +470,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // ----------------------------------------------------
-  // 4. 과목 카드 HTML 렌더러
+  // 4. 과목 카드 HTML 렌더러 (과목소개 + 추천진로 직접 노출)
   // ----------------------------------------------------
   function renderSubjectCardHTML(sub, isMini = false) {
     const isAdded = state.selectedSubjects.some(item => item.id === sub.id);
@@ -478,23 +478,48 @@ document.addEventListener("DOMContentLoaded", () => {
 
     return `
       <div class="subject-item-card" data-id="${sub.id}">
+        <!-- 상단 헤더 -->
         <div class="card-top">
-          <h4>${sub.name}</h4>
-          <div class="card-badges">
-            <span class="badge-tag ${sub.semester === 1 ? 'sem1' : 'sem2'}">${sub.semester}학기</span>
-            <span class="badge-tag group">${sub.group}</span>
-            <span class="badge-tag">${sub.type}</span>
-            ${isGradeFree ? `<span class="badge-tag grade-free">등급 미산출(P/A~E)</span>` : ''}
+          <div>
+            <h4 class="card-title">${sub.name}</h4>
+            <div class="card-grade-badge-line">
+              <span class="badge-tag ${sub.semester === 1 ? 'sem1' : 'sem2'}">${sub.semester}학기</span>
+              <span class="badge-tag group">${sub.group}</span>
+              <span class="badge-tag">${sub.type}</span>
+              ${isGradeFree ? `<span class="badge-tag grade-free">★등급 미산출(성취도만)</span>` : ''}
+            </div>
           </div>
         </div>
-        <p class="card-summary">${sub.summary}</p>
-        <div class="card-careers">
-          ${sub.careers.slice(0, 3).map(c => `<span class="career-pill">💼 ${c}</span>`).join("")}
+
+        <!-- 1. 과목 소개 -->
+        <div class="card-section-box intro-box">
+          <div class="section-mini-title">📖 과목 소개</div>
+          <p class="card-full-text">${sub.summary}</p>
         </div>
+
+        <!-- 2. 어떤 진로·학생과 잘 맞나요? -->
+        <div class="card-section-box target-box">
+          <div class="section-mini-title">🎯 어떤 진로·학생과 잘 맞나요?</div>
+          <p class="card-full-text highlight-text">${sub.recommendedFor}</p>
+        </div>
+
+        <!-- 3. 관련 학과 및 진출 직업 -->
+        <div class="card-section-box meta-box">
+          <div class="meta-row">
+            <span class="meta-label">🎓 관련 학과:</span>
+            <span class="meta-values">${sub.majors.slice(0, 4).join(", ")} 등</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">💼 진출 직업:</span>
+            <span class="meta-values">${sub.careers.slice(0, 4).join(", ")} 등</span>
+          </div>
+        </div>
+
+        <!-- 하단 액션 버튼 -->
         <div class="card-footer-actions">
-          <button class="btn-detail" onclick="openSubjectModal('${sub.id}')">상세 소개 🔍</button>
+          <button class="btn-detail" onclick="openSubjectModal('${sub.id}')">단원·개념 상세 🔍</button>
           <button class="btn-add ${isAdded ? 'added' : ''}" onclick="togglePlannerSubject('${sub.id}')">
-            ${isAdded ? '담김 ✓' : '수강 담기 ＋'}
+            ${isAdded ? '담김 ✓' : '➕ 수강 담기'}
           </button>
         </div>
       </div>
