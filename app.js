@@ -416,6 +416,7 @@ document.addEventListener("DOMContentLoaded", () => {
     showToast(`✅ [${semester}학기] ${major.name} 추천 ${addedCount}개 과목이 담겼습니다. (5/5 완료)`, "success");
     renderPlanner();
     renderCatalog();
+    renderHandbook();
     renderMajorRecommendation(state.currentCatIdx, state.currentMajorIdx);
   };
 
@@ -644,6 +645,7 @@ document.addEventListener("DOMContentLoaded", () => {
     savePlannerState();
     renderPlanner();
     renderCatalog();
+    renderHandbook();
     if (state.activeTab === "tab-major-finder") {
       renderMajorRecommendation(state.currentCatIdx, state.currentMajorIdx);
     }
@@ -842,6 +844,7 @@ document.addEventListener("DOMContentLoaded", () => {
       updateCartCount();
       renderPlanner();
       renderCatalog();
+      renderHandbook();
       if (state.activeTab === "tab-major-finder") renderMajorRecommendation(state.currentCatIdx, state.currentMajorIdx);
       showToast("수강 계획이 초기화되었습니다.", "info");
     }
@@ -867,10 +870,91 @@ document.addEventListener("DOMContentLoaded", () => {
     `).join("");
   }
 
+  // ----------------------------------------------------
+  // 9. 과목 소개 & 관련진로 종합 안내서 (자료집 뷰) 렌더링
+  // ----------------------------------------------------
+  const handbookContentList = document.getElementById("handbookContentList");
+  const handbookSemFilterPills = document.querySelectorAll("#handbookSemFilter .pill");
+  let currentHandbookSem = "all";
+
+  function renderHandbook() {
+    if (!handbookContentList) return;
+    const filtered = SUBJECTS_DATA.filter(sub => {
+      return currentHandbookSem === "all" || sub.semester === parseInt(currentHandbookSem, 10);
+    });
+
+    handbookContentList.innerHTML = filtered.map(sub => {
+      const isAdded = state.selectedSubjects.some(item => item.id === sub.id);
+      return `
+        <article class="handbook-card" id="hb-${sub.id}">
+          <div class="handbook-card-header ${sub.semester === 1 ? 'sem1-border' : 'sem2-border'}">
+            <div class="handbook-title-wrap">
+              <span class="badge-tag ${sub.semester === 1 ? 'sem1' : 'sem2'}">${sub.semester}학기</span>
+              <span class="badge-tag group">${sub.group}</span>
+              <span class="badge-tag">${sub.type}</span>
+              <h4>${sub.name}</h4>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span style="font-size:12px; font-weight:700; color:var(--primary-dark);">${sub.gradeType}</span>
+              <button class="btn btn-sm btn-add ${isAdded ? 'added' : ''}" onclick="togglePlannerSubject('${sub.id}')">
+                ${isAdded ? '담김 ✓' : '＋ 수강 담기'}
+              </button>
+            </div>
+          </div>
+          <div class="handbook-body">
+            <div class="hb-block hb-full">
+              <h5>📖 과목 소개</h5>
+              <p>${sub.summary}</p>
+            </div>
+            <div class="hb-block">
+              <h5>🙋 누구에게 추천하나요?</h5>
+              <p>${sub.recommendedFor}</p>
+            </div>
+            <div class="hb-block">
+              <h5>💡 핵심 개념 돋보기</h5>
+              <div class="hb-concept-box">${sub.deepConcepts}</div>
+            </div>
+            <div class="hb-block">
+              <h5>🎓 관련 진학 학과</h5>
+              <div class="hb-tags-wrap">
+                ${sub.majors.map(m => `<span class="hb-tag">🎓 ${m}</span>`).join("")}
+              </div>
+            </div>
+            <div class="hb-block">
+              <h5>💼 관련 직무 및 직업</h5>
+              <div class="hb-tags-wrap">
+                ${sub.careers.map(c => `<span class="hb-tag">💼 ${c}</span>`).join("")}
+              </div>
+            </div>
+            <div class="hb-block hb-full">
+              <h5>📝 주요 학습 내용 (단원 체계)</h5>
+              <ul class="hb-topics-list">
+                ${sub.keyTopics.map(t => `<li>${t}</li>`).join("")}
+              </ul>
+            </div>
+          </div>
+        </article>
+      `;
+    }).join("");
+  }
+
+  if (handbookSemFilterPills) {
+    handbookSemFilterPills.forEach(pill => {
+      pill.addEventListener("click", () => {
+        handbookSemFilterPills.forEach(p => p.classList.remove("active"));
+        pill.classList.add("active");
+        currentHandbookSem = pill.getAttribute("data-hsem");
+        renderHandbook();
+      });
+    });
+  }
+
   // 초기화 실행
   initSimulator();
   renderCatalog();
+  renderHandbook();
   renderPlanner();
   renderSummaryTable();
   updateCartCount();
 });
+

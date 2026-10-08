@@ -19,9 +19,10 @@
       </div>
       <nav class="nav-tabs" role="tablist">
         <button class="tab-btn active" data-tab="tab-major-finder">🎯 학과별 권장과목 찾기</button>
-        <button class="tab-btn" data-tab="tab-catalog">📚 인천공항고 과목 도감</button>
+        <button class="tab-btn" data-tab="tab-catalog">📚 과목 도감</button>
+        <button class="tab-btn" data-tab="tab-handbook">📖 과목소개 & 관련진로 안내서</button>
         <button class="tab-btn" data-tab="tab-planner">📝 나만의 수강 설계표 <span id="cartCountBadge" class="badge-count">0</span></button>
-        <button class="tab-btn" data-tab="tab-guide">💡 2028 대입·평가 안내</button>
+        <button class="tab-btn" data-tab="tab-guide">💡 2028 대입 가이드</button>
       </nav>
     </div>
   </header>
@@ -46,6 +47,42 @@
         <div class="stat-card highlight-stat">
           <div class="stat-num">학기당 5개</div>
           <div class="stat-label">맞춤 과목 선택 설계</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4대 핵심 모듈 둘러보기 배너 -->
+  <section class="feature-strip">
+    <div class="container">
+      <div class="feature-strip-grid">
+        <div class="feature-strip-item" onclick="document.querySelector('[data-tab=\'tab-major-finder\']').click()">
+          <span class="fs-icon">🎯</span>
+          <div class="fs-content">
+            <strong>학과별 권장과목 맞춤 탐색기</strong>
+            <p>계열 및 세부 학과를 선택하면 주요 대학(서울대·연세대·고려대·건국대 등) 권장과목과 인천공항고 1·2학기 최적 과목 자동 매칭</p>
+          </div>
+        </div>
+        <div class="feature-strip-item" onclick="document.querySelector('[data-tab=\'tab-catalog\']').click()">
+          <span class="fs-icon">📚</span>
+          <div class="fs-content">
+            <strong>인천공항고 과목 도감</strong>
+            <p>1학기/2학기 및 교과군별 필터링, 과목별 상세소개 팝업(추천대상, 관련직업, 주요학습내용, 핵심용어) 열람</p>
+          </div>
+        </div>
+        <div class="feature-strip-item" onclick="document.querySelector('[data-tab=\'tab-planner\']').click()">
+          <span class="fs-icon">📝</span>
+          <div class="fs-content">
+            <strong>나만의 수강 설계표 (5-슬롯)</strong>
+            <p>1학기 5개 + 2학기 5개 슬롯에 과목을 담고 목표 학과 적합도(%) 게이지 분석 및 수강계획서 A4 인쇄/PDF 저장</p>
+          </div>
+        </div>
+        <div class="feature-strip-item" onclick="document.querySelector('[data-tab=\'tab-guide\']').click()">
+          <span class="fs-icon">💡</span>
+          <div class="fs-content">
+            <strong>2028 대입 & 교육과정 가이드</strong>
+            <p>내신 5등급제 성적산출 원리, 사회·과학 융합선택(금융과 경제생활) 석차등급 미산출 전략 팁 제공</p>
+          </div>
         </div>
       </div>
     </div>
@@ -137,7 +174,32 @@
       </div>
     </section>
 
-    <!-- TAB 3: 나만의 수강 설계표 (Planner) -->
+    <!-- TAB 3: 과목 소개 & 관련진로 종합 안내서 (자료집 뷰) -->
+    <section id="tab-handbook" class="tab-panel">
+      <div class="section-header">
+        <div>
+          <h3>📖 인천공항고 선택과목 안내서 (과목소개 & 관련진로 종합편)</h3>
+          <p class="section-desc">인천광역시교육청 과목 안내서의 핵심 내용(소개, 추천대상, 관련학과, 관련진로, 학습내용, 핵심개념)을 책자 형태로 정리한 공식 가이드북입니다.</p>
+        </div>
+        <div class="planner-actions">
+          <button id="printHandbookBtn" class="btn btn-outline" onclick="window.print()">🖨️ 안내서 전체 인쇄/PDF 저장</button>
+        </div>
+      </div>
+
+      <div class="catalog-filters" style="margin-bottom: 20px;">
+        <div class="filter-pills" id="handbookSemFilter">
+          <button class="pill active" data-hsem="all">전체 (28과목)</button>
+          <button class="pill" data-hsem="1">🌸 1학기 과목 (14과목)</button>
+          <button class="pill" data-hsem="2">🍁 2학기 과목 (14과목)</button>
+        </div>
+      </div>
+
+      <div id="handbookContentList" class="handbook-articles-list">
+        <!-- JS 동적 렌더링 -->
+      </div>
+    </section>
+
+    <!-- TAB 4: 나만의 수강 설계표 (Planner) -->
     <section id="tab-planner" class="tab-panel">
       <div class="section-header">
         <div>
