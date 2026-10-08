@@ -6,7 +6,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const state = {
     selectedSubjects: JSON.parse(localStorage.getItem("incheonAirportPlan") || "[]"),
     activeTab: "tab-major-finder",
-    currentMajor: null,
+    currentCatIdx: 0,
+    currentMajorIdx: 0,
     catalogFilterSem: "all",
     catalogFilterGroup: "all",
     catalogSearchQuery: "",
@@ -20,6 +21,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const toastContainer = document.getElementById("toastContainer");
 
   // 시뮬레이터 DOM
+  const categoryPillsBar = document.getElementById("categoryPillsBar");
+  const majorChipsGrid = document.getElementById("majorChipsGrid");
   const categorySelect = document.getElementById("categorySelect");
   const majorSelect = document.getElementById("majorSelect");
   const majorSearchInput = document.getElementById("majorSearchInput");
@@ -97,80 +100,183 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ----------------------------------------------------
-  // 2. 초기 데이터 셋업 (시뮬레이터 & 셀렉트)
+  // 2. 계열 및 학과 선택 시뮬레이터 (탭 버튼 & 칩 카드 & 셀렉트 완전 연동)
   // ----------------------------------------------------
+  const CATEGORY_ICONS = ["🚀", "💊", "📈", "📖", "🌍"];
+
   function initSimulator() {
+    renderCategoryPills();
+    syncCategoryDropdown();
+    renderMajorChips(state.currentCatIdx);
+    syncMajorDropdown(state.currentCatIdx);
+    populatePlannerMajorOptions();
+    renderMajorRecommendation(state.currentCatIdx, state.currentMajorIdx);
+
+    // 이벤트 리스너: 드롭다운 변경 시
+    categorySelect.addEventListener("change", (e) => {
+      const catIdx = parseInt(e.target.value, 10) || 0;
+      selectCategory(catIdx, 0);
+    });
+
+    majorSelect.addEventListener("change", (e) => {
+      const [cIdx, mIdx] = e.target.value.split("-").map(Number);
+      selectMajor(cIdx, mIdx);
+    });
+
+    // 실시간 학과명 검색
+    majorSearchInput.addEventListener("input", (e) => {
+      handleMajorSearch(e.target.value.trim().toLowerCase());
+    });
+  }
+
+  // Step 1: 계열 탭 버튼 렌더링
+  function renderCategoryPills() {
+    categoryPillsBar.innerHTML = "";
+    MAJOR_CATEGORIES.forEach((cat, idx) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = `category-pill-btn ${idx === state.currentCatIdx ? "active" : ""}`;
+      const icon = CATEGORY_ICONS[idx % CATEGORY_ICONS.length] || "🎯";
+      btn.innerHTML = `<span>${icon}</span> ${cat.category}`;
+      btn.addEventListener("click", () => {
+        majorSearchInput.value = "";
+        selectCategory(idx, 0);
+      });
+      categoryPillsBar.appendChild(btn);
+    });
+  }
+
+  // Step 2: 세부 학과 칩 렌더링
+  function renderMajorChips(catIdx, activeMajorIdx = 0) {
+    majorChipsGrid.innerHTML = "";
+    const cat = MAJOR_CATEGORIES[catIdx];
+    if (!cat || !cat.majors) return;
+
+    cat.majors.forEach((m, mIdx) => {
+      const chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = `major-chip-btn ${mIdx === activeMajorIdx ? "active" : ""}`;
+      chip.setAttribute("data-major-key", `${catIdx}-${mIdx}`);
+      chip.innerHTML = `<span>🎓 ${m.name}</span>`;
+      chip.addEventListener("click", () => {
+        selectMajor(catIdx, mIdx);
+      });
+      majorChipsGrid.appendChild(chip);
+    });
+  }
+
+  // 계열 선택 처리
+  function selectCategory(catIdx, mIdx = 0) {
+    state.currentCatIdx = catIdx;
+    state.currentMajorIdx = mIdx;
+
+    renderCategoryPills();
+    categorySelect.value = catIdx;
+
+    renderMajorChips(catIdx, mIdx);
+    syncMajorDropdown(catIdx, mIdx);
+
+    renderMajorRecommendation(catIdx, mIdx);
+  }
+
+  // 학과 선택 처리
+  function selectMajor(catIdx, mIdx) {
+    state.currentCatIdx = catIdx;
+    state.currentMajorIdx = mIdx;
+
+    // 칩 버튼 active 토글
+    const allChips = majorChipsGrid.querySelectorAll(".major-chip-btn");
+    allChips.forEach((btn, idx) => {
+      btn.classList.toggle("active", idx === mIdx);
+    });
+
+    majorSelect.value = `${catIdx}-${mIdx}`;
+    renderMajorRecommendation(catIdx, mIdx);
+  }
+
+  // 드롭다운 동기화
+  function syncCategoryDropdown() {
     categorySelect.innerHTML = "";
-    MAJOR_CATEGORIES.forEach((cat, index) => {
+    MAJOR_CATEGORIES.forEach((cat, idx) => {
       const opt = document.createElement("option");
-      opt.value = index;
+      opt.value = idx;
       opt.textContent = cat.category;
       categorySelect.appendChild(opt);
     });
-
-    updateMajorOptions();
-
-    categorySelect.addEventListener("change", () => {
-      updateMajorOptions();
-      renderMajorRecommendation();
-    });
-
-    majorSelect.addEventListener("change", () => {
-      renderMajorRecommendation();
-    });
-
-    majorSearchInput.addEventListener("input", (e) => {
-      const q = e.target.value.trim().toLowerCase();
-      if (!q) {
-        updateMajorOptions();
-        renderMajorRecommendation();
-        return;
-      }
-
-      majorSelect.innerHTML = "";
-      let firstFound = null;
-      MAJOR_CATEGORIES.forEach((cat, catIdx) => {
-        cat.majors.forEach((m, mIdx) => {
-          if (m.name.toLowerCase().includes(q) || cat.category.toLowerCase().includes(q)) {
-            const opt = document.createElement("option");
-            opt.value = `${catIdx}-${mIdx}`;
-            opt.textContent = `[${cat.category.split(' ')[0]}] ${m.name}`;
-            majorSelect.appendChild(opt);
-            if (!firstFound) firstFound = `${catIdx}-${mIdx}`;
-          }
-        });
-      });
-
-      if (firstFound) {
-        majorSelect.value = firstFound;
-        renderMajorRecommendation();
-      } else {
-        majorRecommendationResult.innerHTML = `
-          <div class="major-overview-card" style="text-align:center; padding: 40px; color: #94a3b8;">
-            <h4>🔍 '${q}'에 대한 검색 결과가 없습니다.</h4>
-            <p>상단 계열 선택 드롭다운에서 직접 선택해 보세요.</p>
-          </div>
-        `;
-      }
-    });
-
-    renderMajorRecommendation();
+    categorySelect.value = state.currentCatIdx;
   }
 
-  function updateMajorOptions() {
-    const catIndex = parseInt(categorySelect.value, 10) || 0;
-    const cat = MAJOR_CATEGORIES[catIndex];
+  function syncMajorDropdown(catIdx, activeMajorIdx = 0) {
     majorSelect.innerHTML = "";
+    const cat = MAJOR_CATEGORIES[catIdx];
     if (!cat) return;
 
-    cat.majors.forEach((m, mIndex) => {
+    cat.majors.forEach((m, mIdx) => {
       const opt = document.createElement("option");
-      opt.value = `${catIndex}-${mIndex}`;
+      opt.value = `${catIdx}-${mIdx}`;
       opt.textContent = m.name;
       majorSelect.appendChild(opt);
     });
+    majorSelect.value = `${catIdx}-${activeMajorIdx}`;
+  }
 
-    populatePlannerMajorOptions();
+  // 검색 처리
+  function handleMajorSearch(query) {
+    if (!query) {
+      renderCategoryPills();
+      renderMajorChips(state.currentCatIdx, state.currentMajorIdx);
+      syncMajorDropdown(state.currentCatIdx, state.currentMajorIdx);
+      renderMajorRecommendation(state.currentCatIdx, state.currentMajorIdx);
+      return;
+    }
+
+    majorChipsGrid.innerHTML = "";
+    let foundMatches = [];
+
+    MAJOR_CATEGORIES.forEach((cat, catIdx) => {
+      cat.majors.forEach((m, mIdx) => {
+        if (m.name.toLowerCase().includes(query) || cat.category.toLowerCase().includes(query)) {
+          foundMatches.push({ catIdx, mIdx, major: m, category: cat.category });
+        }
+      });
+    });
+
+    if (foundMatches.length === 0) {
+      majorChipsGrid.innerHTML = `
+        <div style="grid-column: 1/-1; text-align:center; padding: 20px; color: #94a3b8; font-size: 13px;">
+          '${query}' 검색어와 일치하는 학과가 없습니다.
+        </div>
+      `;
+      return;
+    }
+
+    // 검색 결과로 칩 렌더링
+    foundMatches.forEach((item, fIdx) => {
+      const chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = `major-chip-btn ${fIdx === 0 ? "active" : ""}`;
+      chip.innerHTML = `<span><strong>[${item.category.split(' ')[0]}]</strong> ${item.major.name}</span>`;
+      chip.addEventListener("click", () => {
+        state.currentCatIdx = item.catIdx;
+        state.currentMajorIdx = item.mIdx;
+        renderCategoryPills();
+        syncCategoryDropdown();
+        categorySelect.value = item.catIdx;
+        syncMajorDropdown(item.catIdx, item.mIdx);
+        renderMajorRecommendation(item.catIdx, item.mIdx);
+        
+        // 검색 칩 active 표시
+        majorChipsGrid.querySelectorAll(".major-chip-btn").forEach(c => c.classList.remove("active"));
+        chip.classList.add("active");
+      });
+      majorChipsGrid.appendChild(chip);
+    });
+
+    // 첫 번째 검색 결과 자동 선택
+    const first = foundMatches[0];
+    state.currentCatIdx = first.catIdx;
+    state.currentMajorIdx = first.mIdx;
+    renderMajorRecommendation(first.catIdx, first.mIdx);
   }
 
   function populatePlannerMajorOptions() {
@@ -195,17 +301,11 @@ document.addEventListener("DOMContentLoaded", () => {
   // ----------------------------------------------------
   // 3. 학과별 권장과목 시뮬레이션 결과 렌더링
   // ----------------------------------------------------
-  function renderMajorRecommendation() {
-    const val = majorSelect.value;
-    if (!val) return;
-
-    const [catIdx, mIdx] = val.split("-").map(Number);
+  function renderMajorRecommendation(catIdx, mIdx) {
     const cat = MAJOR_CATEGORIES[catIdx];
     if (!cat) return;
     const major = cat.majors[mIdx];
     if (!major) return;
-
-    state.currentMajor = major;
 
     // 인천공항고 개설과목 객체 매핑
     const sem1RecSubjects = SUBJECTS_DATA.filter(s => s.semester === 1 && major.incheonAirportMatching.sem1.includes(s.name));
@@ -220,7 +320,7 @@ document.addEventListener("DOMContentLoaded", () => {
           </div>
           <div style="display: flex; gap: 8px; flex-wrap: wrap;">
             <button class="btn btn-primary" onclick="applyFullPackToPlanner('${catIdx}-${mIdx}')">
-              ⚡ 추천 10과목(1학기 5개 + 2학기 5개) 일괄 담기
+              ⚡ 10과목(1학기 5개 + 2학기 5개) 일괄 담기
             </button>
             <button class="btn btn-outline" onclick="selectThisMajorInPlanner('${catIdx}-${mIdx}')">
               🎯 목표 학과로 설정
@@ -316,10 +416,10 @@ document.addEventListener("DOMContentLoaded", () => {
     showToast(`✅ [${semester}학기] ${major.name} 추천 ${addedCount}개 과목이 담겼습니다. (5/5 완료)`, "success");
     renderPlanner();
     renderCatalog();
-    renderMajorRecommendation();
+    renderMajorRecommendation(state.currentCatIdx, state.currentMajorIdx);
   };
 
-  // 목표 학과 추천 10과목(1학기 5개 + 2학기 5개) 전체 일괄 담기
+  // 목표 학과 추천 10과목 전체 일괄 담기
   window.applyFullPackToPlanner = function(val) {
     const [catIdx, mIdx] = val.split("-").map(Number);
     const major = MAJOR_CATEGORIES[catIdx].majors[mIdx];
@@ -545,7 +645,7 @@ document.addEventListener("DOMContentLoaded", () => {
     renderPlanner();
     renderCatalog();
     if (state.activeTab === "tab-major-finder") {
-      renderMajorRecommendation();
+      renderMajorRecommendation(state.currentCatIdx, state.currentMajorIdx);
     }
   };
 
@@ -742,7 +842,7 @@ document.addEventListener("DOMContentLoaded", () => {
       updateCartCount();
       renderPlanner();
       renderCatalog();
-      if (state.activeTab === "tab-major-finder") renderMajorRecommendation();
+      if (state.activeTab === "tab-major-finder") renderMajorRecommendation(state.currentCatIdx, state.currentMajorIdx);
       showToast("수강 계획이 초기화되었습니다.", "info");
     }
   });

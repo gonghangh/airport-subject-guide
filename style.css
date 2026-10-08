@@ -266,25 +266,178 @@ body {
   margin-top: 4px;
 }
 
-/* Controls & Filters */
-.simulator-controls {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 16px;
+/* Simulator Controls Card */
+.simulator-controls-card {
   background: white;
-  padding: 22px;
+  padding: 24px;
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
   border: 1px solid var(--border-color);
   margin-bottom: 24px;
 }
 
-.control-group label {
-  display: block;
-  font-size: 13px;
-  font-weight: 700;
+.step-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.step-num {
+  background: #0284c7;
+  color: white;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+}
+
+.step-label strong {
   color: var(--navy-dark);
+  font-size: 15px;
+}
+
+.step-hint {
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 400;
+}
+
+/* Step 1: Category Pills Bar */
+.category-pills-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
   margin-bottom: 8px;
+}
+
+.category-pill-btn {
+  background: #f8fafc;
+  border: 1.5px solid var(--border-color);
+  color: #334155;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 700;
+  padding: 9px 16px;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.category-pill-btn:hover {
+  border-color: #0284c7;
+  color: #0284c7;
+  background: #f0f9ff;
+}
+
+.category-pill-btn.active {
+  background: #0284c7;
+  border-color: #0284c7;
+  color: white;
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.3);
+}
+
+/* Step 2: Major Chips Grid */
+.major-chips-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 10px;
+  margin-bottom: 16px;
+  background: #f8fafc;
+  padding: 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.major-chip-btn {
+  background: white;
+  border: 1.5px solid var(--border-color);
+  color: #1e293b;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: var(--transition);
+  text-align: left;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  line-height: 1.35;
+}
+
+.major-chip-btn:hover {
+  border-color: #0284c7;
+  background: #f0f9ff;
+  color: #0284c7;
+}
+
+.major-chip-btn.active {
+  background: #eff6ff;
+  border-color: #0284c7;
+  color: #0369a1;
+  font-weight: 800;
+  box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.2);
+}
+
+.major-chip-btn.active::after {
+  content: "선택됨 ✓";
+  font-size: 11px;
+  background: #0284c7;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 6px;
+}
+
+/* Step 3: Search & Dropdown Fallback */
+.simulator-filter-sub {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border-color);
+}
+
+.search-input-wrap {
+  flex: 1;
+  min-width: 240px;
+  position: relative;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: #94a3b8;
+  pointer-events: none;
+}
+
+.search-with-icon {
+  padding-left: 36px;
+}
+
+.dropdown-fallback-wrap {
+  display: flex;
+  gap: 8px;
+}
+
+.mini-select {
+  width: auto;
+  min-width: 160px;
+  padding: 8px 12px;
+  font-size: 12.5px;
 }
 
 .form-select, .form-input {

@@ -63,18 +63,36 @@
         </div>
       </div>
 
-      <div class="simulator-controls">
-        <div class="control-group">
-          <label for="categorySelect">1. 계열 선택</label>
-          <select id="categorySelect" class="form-select"></select>
+      <div class="simulator-controls-card">
+        <!-- 1. 계열 선택 탭 바 -->
+        <div class="step-label">
+          <span class="step-num">STEP 1</span>
+          <strong>계열(분야) 선택</strong>
         </div>
-        <div class="control-group">
-          <label for="majorSelect">2. 세부 학과 선택</label>
-          <select id="majorSelect" class="form-select"></select>
+        <div class="category-pills-bar" id="categoryPillsBar">
+          <!-- JS 동적 버튼 렌더링 -->
         </div>
-        <div class="control-group search-group">
-          <label for="majorSearchInput">학과 직접 검색</label>
-          <input type="text" id="majorSearchInput" class="form-input" placeholder="예: 기계공학, 경영, 인공지능, 간호...">
+
+        <!-- 2. 세부 학과 선택 그리드 버튼 -->
+        <div class="step-label" style="margin-top: 18px;">
+          <span class="step-num">STEP 2</span>
+          <strong>세부 학과 클릭 선택</strong>
+          <span class="step-hint">(아래 학과 버튼을 누르면 추천 과목이 즉시 변경됩니다)</span>
+        </div>
+        <div class="major-chips-grid" id="majorChipsGrid">
+          <!-- JS 동적 학과 칩 렌더링 -->
+        </div>
+
+        <!-- 3. 빠른 검색창 및 보조 드롭다운 -->
+        <div class="simulator-filter-sub">
+          <div class="search-input-wrap">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="majorSearchInput" class="form-input search-with-icon" placeholder="관심 학과명 검색 (예: 기계, 컴퓨터, 의예, 경영, 미디어, 간호, 일본어...)">
+          </div>
+          <div class="dropdown-fallback-wrap">
+            <select id="categorySelect" class="form-select mini-select" title="계열 드롭다운 선택"></select>
+            <select id="majorSelect" class="form-select mini-select" title="학과 드롭다운 선택"></select>
+          </div>
         </div>
       </div>
 
