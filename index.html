@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>인천공항고등학교 선택과목 안내 & 학과별 권장과목 시뮬레이터</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Header / Navigation -->
+  <header class="site-header">
+    <div class="header-inner container">
+      <div class="brand">
+        <span class="badge-school">인천공항고등학교</span>
+        <h1>2022 개정 교육과정 <span>선택과목 가이드 & 진로 시뮬레이터</span></h1>
+      </div>
+      <nav class="nav-tabs" role="tablist">
+        <button class="tab-btn active" data-tab="tab-major-finder">🎯 학과별 권장과목 찾기</button>
+        <button class="tab-btn" data-tab="tab-catalog">📚 인천공항고 과목 도감</button>
+        <button class="tab-btn" data-tab="tab-planner">📝 나만의 수강 설계표 <span id="cartCountBadge" class="badge-count">0</span></button>
+        <button class="tab-btn" data-tab="tab-guide">💡 2028 대입·평가 안내</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Banner -->
+  <section class="hero-section">
+    <div class="container hero-content">
+      <div class="hero-text">
+        <div class="hero-tag">✈️ 내 꿈의 항로를 여는 과목 선택 가이드</div>
+        <h2>희망 학과를 선택하면, <strong>인천공항고 맞춤 권장과목</strong>을 한눈에!</h2>
+        <p>인천광역시교육청 과목 안내서 및 주요 대학 2028 대입 전공연계 권장과목 기준을 반영하여, 1학기·2학기 개설 과목의 상세 소개와 진로 로드맵을 제공합니다.</p>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-card">
+          <div class="stat-num">14개</div>
+          <div class="stat-label">1학기 개설 과목</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">14개</div>
+          <div class="stat-label">2학기 개설 과목</div>
+        </div>
+        <div class="stat-card highlight-stat">
+          <div class="stat-num">학기당 5개</div>
+          <div class="stat-label">맞춤 과목 선택 설계</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content Area -->
+  <main class="container main-container">
+    
+    <!-- TAB 1: 학과별 권장과목 시뮬레이터 -->
+    <section id="tab-major-finder" class="tab-panel active">
+      <div class="section-header">
+        <div>
+          <h3>🎯 희망 전공(학과) 선택 및 맞춤형 과목 추천</h3>
+          <p class="section-desc">지망하는 계열과 학과를 고르면 주요 대학 핵심/권장과목과 함께 인천공항고 개설 과목 중 최적의 수강 조합을 추천해 드립니다.</p>
+        </div>
+      </div>
+
+      <div class="simulator-controls">
+        <div class="control-group">
+          <label for="categorySelect">1. 계열 선택</label>
+          <select id="categorySelect" class="form-select"></select>
+        </div>
+        <div class="control-group">
+          <label for="majorSelect">2. 세부 학과 선택</label>
+          <select id="majorSelect" class="form-select"></select>
+        </div>
+        <div class="control-group search-group">
+          <label for="majorSearchInput">학과 직접 검색</label>
+          <input type="text" id="majorSearchInput" class="form-input" placeholder="예: 기계공학, 경영, 인공지능, 간호...">
+        </div>
+      </div>
+
+      <!-- 추천 결과 영역 -->
+      <div id="majorRecommendationResult" class="recommendation-result">
+        <!-- JS 동적 렌더링 -->
+      </div>
+    </section>
+
+    <!-- TAB 2: 과목 전체 도감 (Catalog) -->
+    <section id="tab-catalog" class="tab-panel">
+      <div class="section-header">
+        <div>
+          <h3>📚 인천공항고등학교 개설 선택과목 전체보기</h3>
+          <p class="section-desc">1학기(14과목) 및 2학기(14과목)의 교과군별 소개, 성적산출 방식, 진로 연계 내용을 확인하세요.</p>
+        </div>
+        <div class="catalog-filters">
+          <div class="filter-pills" id="semesterFilter">
+            <button class="pill active" data-sem="all">전체 학기</button>
+            <button class="pill" data-sem="1">1학기 (14과목)</button>
+            <button class="pill" data-sem="2">2학기 (14과목)</button>
+          </div>
+          <div class="filter-pills" id="groupFilter">
+            <button class="pill active" data-group="all">전체 교과</button>
+            <button class="pill" data-group="국어">국어</button>
+            <button class="pill" data-group="수학">수학</button>
+            <button class="pill" data-group="영어">영어</button>
+            <button class="pill" data-group="사회">사회</button>
+            <button class="pill" data-group="과학">과학</button>
+            <button class="pill" data-group="기술·가정/정보">정보·기술가정</button>
+            <button class="pill" data-group="제2외국어">제2외국어</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="search-bar-wrap">
+        <input type="text" id="subjectSearchInput" class="form-input" placeholder="🔍 과목명, 관련 직업, 학과, 키워드로 검색 (예: 역학, AI, 의사, 경영, 로봇...)">
+      </div>
+
+      <div id="subjectGrid" class="subject-cards-grid">
+        <!-- JS 동적 렌더링 -->
+      </div>
+    </section>
+
+    <!-- TAB 3: 나만의 수강 설계표 (Planner) -->
+    <section id="tab-planner" class="tab-panel">
+      <div class="section-header">
+        <div>
+          <h3>📝 나만의 수강 설계표 & 진로 적합도 진단</h3>
+          <p class="section-desc">관심 과목을 담아 학기별 수강 계획을 수립하고, 목표 학과와의 연계성을 진단해 보세요.</p>
+        </div>
+        <div class="planner-actions">
+          <button id="printPlanBtn" class="btn btn-outline">🖨️ 수강계획서 인쇄/PDF 저장</button>
+          <button id="clearPlanBtn" class="btn btn-ghost">초기화</button>
+        </div>
+      </div>
+
+      <div class="planner-guide-banner">
+        <div class="guide-banner-icon">🎯</div>
+        <div class="guide-banner-text">
+          <strong>인천공항고등학교 수강신청 가이드:</strong> 1학기 <strong>5개 과목</strong>, 2학기 <strong>5개 과목</strong>을 균형 있게 선택하세요. 과목을 담으면 슬롯이 채워집니다.
+        </div>
+      </div>
+
+      <div class="planner-layout">
+        <!-- 왼쪽: 선택한 과목 리스트 (5슬롯) -->
+        <div class="planner-main">
+          <div class="planner-semester-card">
+            <div class="card-sem-header sem1-bg">
+              <div class="header-title-wrap">
+                <h4>🌸 1학기 선택 과목 <span class="slot-quota">(목표: 5과목)</span></h4>
+                <div class="slot-status">
+                  <span id="sem1Count" class="badge">0 / 5</span>
+                  <span id="sem1StatusBadge" class="status-pill waiting">선택 중</span>
+                </div>
+              </div>
+              <div class="progress-bar-wrap">
+                <div id="sem1ProgressBar" class="progress-bar-fill" style="width: 0%;"></div>
+              </div>
+            </div>
+            <div id="sem1SelectedList" class="selected-items-list">
+              <!-- JS 슬롯 렌더링 -->
+            </div>
+          </div>
+
+          <div class="planner-semester-card">
+            <div class="card-sem-header sem2-bg">
+              <div class="header-title-wrap">
+                <h4>🍁 2학기 선택 과목 <span class="slot-quota">(목표: 5과목)</span></h4>
+                <div class="slot-status">
+                  <span id="sem2Count" class="badge">0 / 5</span>
+                  <span id="sem2StatusBadge" class="status-pill waiting">선택 중</span>
+                </div>
+              </div>
+              <div class="progress-bar-wrap">
+                <div id="sem2ProgressBar" class="progress-bar-fill sem2-fill" style="width: 0%;"></div>
+              </div>
+            </div>
+            <div id="sem2SelectedList" class="selected-items-list">
+              <!-- JS 슬롯 렌더링 -->
+            </div>
+          </div>
+        </div>
+
+        <!-- 오른쪽: 진단 및 요약 패널 -->
+        <div class="planner-sidebar">
+          <div class="diagnostic-card">
+            <h4>🎯 목표 학과 매칭 진단</h4>
+            <div class="form-group">
+              <label for="plannerTargetMajor">나의 지망 학과</label>
+              <select id="plannerTargetMajor" class="form-select"></select>
+            </div>
+            <div id="plannerQuickApplyWrap" class="quick-apply-box" style="display:none;">
+              <p class="quick-title">⚡ 목표 학과 추천 5과목 자동 적용</p>
+              <div class="quick-btns">
+                <button id="applySem1RecBtn" class="btn btn-sm btn-outline">🌸 1학기 추천 5개 담기</button>
+                <button id="applySem2RecBtn" class="btn btn-sm btn-outline">🍁 2학기 추천 5개 담기</button>
+              </div>
+            </div>
+            <div id="plannerDiagnosisResult" class="diagnosis-box">
+              <p class="text-muted">목표 학과를 선택하시면 권장 과목 반영 여부를 실시간 진단합니다.</p>
+            </div>
+          </div>
+
+          <div class="summary-card">
+            <h4>📊 과목군별 선택 밸런스</h4>
+            <div id="plannerGroupBalance" class="balance-bars">
+              <!-- JS 동적 렌더링 -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: 2028 대입 및 교육과정 가이드 -->
+    <section id="tab-guide" class="tab-panel">
+      <div class="section-header">
+        <div>
+          <h3>💡 2022 개정 교육과정 & 2028 대입 핵심 꿀팁</h3>
+          <p class="section-desc">인천광역시교육청 안내서 및 대입 전형 변화에 따른 현명한 과목 선택 팁을 확인하세요.</p>
+        </div>
+      </div>
+
+      <div class="guide-grid">
+        <div class="guide-card">
+          <div class="guide-icon">📈</div>
+          <h4>1. 2028 대입 내신 5등급제 성적산출</h4>
+          <p>현 고1부터 적용되는 2028 대입에서는 기존 9등급제가 <strong>5등급제(1등급 10%, 2등급 24%, 3등급 32%...)</strong>로 완화됩니다. 일반 선택 및 진로 선택 과목은 성취도(A~E)와 함께 석차등급(1~5등급)이 표기됩니다.</p>
+        </div>
+
+        <div class="guide-card highlight-card">
+          <div class="guide-icon">✨</div>
+          <h4>2. 사회·과학 '융합 선택' 석차등급 미산출!</h4>
+          <p><strong>사회·과학 융합 선택 과목(예: 2학기 [금융과 경제생활])</strong>은 5단계 절대평가 성취도(A~E)만 산출되고 석차등급이 미산출('·')됩니다! 내신 등급 부담 없이 심화 탐구 역량을 뽐낼 수 있는 전략적 과목입니다.</p>
+        </div>
+
+        <div class="guide-card">
+          <div class="guide-icon">🎯</div>
+          <h4>3. 대학별 전공연계 권장과목 이수 필수</h4>
+          <p>서울대, 연세대, 고려대, 성균관대, 건국대 등 주요 대학 학생부종합전형(서류평가)에서는 모집단위별 <strong>핵심 권장과목 및 권장과목 이수 여부</strong>를 학업역량과 전공적합성의 가장 중요한 지표로 반영합니다.</p>
+        </div>
+
+        <div class="guide-card">
+          <div class="guide-icon">⚖️</div>
+          <h4>4. 과목 선택의 균형과 위계성</h4>
+          <p>자연·공학계열은 [물리학 ➡️ 역학과 에너지], [화학 ➡️ 물질과 에너지], [생명과학 ➡️ 세포와 물질대사]와 같이 1학기 기초 일반선택 이수 후 2학기 심화 진로선택으로 연결되는 <strong>위계적 학습 경로</strong>가 가장 높은 평가를 받습니다.</p>
+        </div>
+      </div>
+
+      <!-- 과목 일람표 요약 테이블 -->
+      <div class="subject-table-wrap">
+        <h4>📋 인천공항고 선택과목 한눈에 정리표</h4>
+        <table class="summary-table">
+          <thead>
+            <tr>
+              <th>학기</th>
+              <th>교과군</th>
+              <th>과목명</th>
+              <th>과목 유형</th>
+              <th>성적 산출 방식</th>
+              <th>주요 추천 진로·학과</th>
+            </tr>
+          </thead>
+          <tbody id="summaryTableBody">
+            <!-- JS 렌더링 -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 과목 상세 모달 팝업 -->
+  <div id="subjectModal" class="modal-backdrop">
+    <div class="modal-dialog">
+      <button class="modal-close" id="modalCloseBtn">&times;</button>
+      <div class="modal-header">
+        <div class="modal-badge-group">
+          <span id="modalSemBadge" class="modal-sem-badge">1학기</span>
+          <span id="modalGroupBadge" class="modal-group-badge">과학</span>
+          <span id="modalTypeBadge" class="modal-type-badge">일반 선택</span>
+        </div>
+        <h2 id="modalSubjectName">과목명</h2>
+        <div id="modalGradeType" class="modal-grade-desc">성적 산출 방식</div>
+      </div>
+      <div class="modal-body">
+        <div class="modal-section">
+          <h5>📖 과목 소개</h5>
+          <p id="modalSummary"></p>
+        </div>
+        <div class="modal-section">
+          <h5>🙋 누구에게 추천하나요?</h5>
+          <p id="modalRecommendedFor"></p>
+        </div>
+        <div class="modal-section">
+          <h5>🎓 관련 학과 및 진로 분야</h5>
+          <div class="tags-container" id="modalMajors"></div>
+          <div class="tags-container" id="modalCareers" style="margin-top: 8px;"></div>
+        </div>
+        <div class="modal-section">
+          <h5>📝 주요 학습 내용</h5>
+          <ul id="modalTopicsList" class="topics-list"></ul>
+        </div>
+        <div class="modal-section concept-box">
+          <h5>💡 핵심 개념 돋보기</h5>
+          <p id="modalConcept"></p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="modalAddPlannerBtn" class="btn btn-primary">➕ 내 수강계획에 담기</button>
+        <button id="modalCloseActionBtn" class="btn btn-outline">닫기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 토스트 알림창 -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- 푸터 -->
+  <footer class="site-footer">
+    <div class="container footer-content">
+      <p><strong>인천공항고등학교 2022 개정 교육과정 선택과목 안내 포털</strong></p>
+      <p>출처: 인천광역시교육청 「2022 개정 교육과정 고등학교 과목 안내서」 및 주요 대학 2028 대입 전공연계 권장과목 가이드라인</p>
+      <p class="copyright">Designed for Incheon Airport High School Students & Teachers</p>
+    </div>
+  </footer>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
